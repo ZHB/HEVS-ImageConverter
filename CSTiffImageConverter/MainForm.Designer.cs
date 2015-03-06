@@ -37,6 +37,7 @@
             this.lblOutputOptions = new System.Windows.Forms.Label();
             this.cbOutputFormat = new System.Windows.Forms.ComboBox();
             this.btnConvertImage = new System.Windows.Forms.Button();
+            this.chkResize = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.SuspendLayout();
@@ -45,10 +46,10 @@
             // 
             this.groupBox1.Controls.Add(this.textBox1);
             this.groupBox1.Controls.Add(this.btnImagePicker);
-            this.groupBox1.Location = new System.Drawing.Point(8, 113);
+            this.groupBox1.Location = new System.Drawing.Point(8, 133);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(331, 77);
-            this.groupBox1.TabIndex = 5;
+            this.groupBox1.TabIndex = 6;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Image to convert";
             // 
@@ -94,12 +95,13 @@
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.chkResize);
             this.groupBox3.Controls.Add(this.lblOutputOptions);
             this.groupBox3.Controls.Add(this.cbOutputFormat);
             this.groupBox3.Controls.Add(this.chkIsMultipage);
             this.groupBox3.Location = new System.Drawing.Point(8, 12);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(331, 94);
+            this.groupBox3.Size = new System.Drawing.Size(331, 115);
             this.groupBox3.TabIndex = 7;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Output options";
@@ -125,7 +127,7 @@
             // 
             // btnConvertImage
             // 
-            this.btnConvertImage.Location = new System.Drawing.Point(78, 203);
+            this.btnConvertImage.Location = new System.Drawing.Point(78, 225);
             this.btnConvertImage.Name = "btnConvertImage";
             this.btnConvertImage.Size = new System.Drawing.Size(179, 23);
             this.btnConvertImage.TabIndex = 3;
@@ -133,11 +135,23 @@
             this.btnConvertImage.UseVisualStyleBackColor = true;
             this.btnConvertImage.Click += new System.EventHandler(this.btnConvertImage_Click);
             // 
+            // chkResize
+            // 
+            this.chkResize.AutoSize = true;
+            this.chkResize.Checked = true;
+            this.chkResize.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkResize.Location = new System.Drawing.Point(70, 92);
+            this.chkResize.Name = "chkResize";
+            this.chkResize.Size = new System.Drawing.Size(139, 17);
+            this.chkResize.TabIndex = 5;
+            this.chkResize.Text = "Resize to 1024 * 768 px";
+            this.chkResize.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(349, 238);
+            this.ClientSize = new System.Drawing.Size(349, 266);
             this.Controls.Add(this.btnConvertImage);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox1);
@@ -164,6 +178,7 @@
         private System.Windows.Forms.ComboBox cbOutputFormat;
         private System.Windows.Forms.Button btnConvertImage;
         private System.Windows.Forms.Label lblOutputOptions;
+        private System.Windows.Forms.CheckBox chkResize;
 
     }
 }
