@@ -88,27 +88,38 @@ namespace CSTiffImageConverter
         /// </returns>
         private string[] saveImage(Image image, string[] fileNames)
         {
+            
             FrameDimension frameDimensions = new FrameDimension(image.FrameDimensionsList[0]);
 
             // Gets the number of pages from the tiff image (if multipage)
             int frameNum = image.GetFrameCount(frameDimensions);
             string[] imagePaths = new string[frameNum];
 
-            for (int frame = 0; frame < frameNum; frame++)
+            try
             {
-                // Selects one frame at a time and save as jpeg.
-                image.SelectActiveFrame(frameDimensions, frame);
-                using (Bitmap bmp = new Bitmap(image))
+                for (int frame = 0; frame < frameNum; frame++)
                 {
-                    imagePaths[frame] = String.Format("{0}\\{1}{2}." + outputFormat.ToString().ToLowerInvariant(),
-                        Path.GetDirectoryName(fileNames[0]),
-                        Path.GetFileNameWithoutExtension(fileNames[0]),
-                        frame);
-                    bmp.Save(imagePaths[frame], outputFormat);
+                    // Selects one frame at a time and save as jpeg.
+                    image.SelectActiveFrame(frameDimensions, frame);
+                    using (Bitmap bmp = new Bitmap(image))
+                    {
+                        imagePaths[frame] = String.Format("{0}\\{1}{2}." + outputFormat.ToString().ToLowerInvariant(),
+                            Path.GetDirectoryName(fileNames[0]),
+                            Path.GetFileNameWithoutExtension(fileNames[0]),
+                            frame);
+                        bmp.Save(imagePaths[frame], outputFormat);
+                    }
                 }
+
+                return imagePaths;
+            }
+            catch
+            {
+                MessageBox.Show("There was a problem saving the file. Check the file permissions.");
             }
 
-            return imagePaths;
+
+            return null;
         }
 
         /// <summary>
