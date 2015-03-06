@@ -46,7 +46,7 @@
             // 
             this.groupBox1.Controls.Add(this.textBox1);
             this.groupBox1.Controls.Add(this.btnImagePicker);
-            this.groupBox1.Location = new System.Drawing.Point(8, 133);
+            this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(331, 77);
             this.groupBox1.TabIndex = 6;
@@ -99,7 +99,7 @@
             this.groupBox3.Controls.Add(this.lblOutputOptions);
             this.groupBox3.Controls.Add(this.cbOutputFormat);
             this.groupBox3.Controls.Add(this.chkIsMultipage);
-            this.groupBox3.Location = new System.Drawing.Point(8, 12);
+            this.groupBox3.Location = new System.Drawing.Point(12, 95);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(331, 115);
             this.groupBox3.TabIndex = 7;
@@ -127,7 +127,7 @@
             // 
             // btnConvertImage
             // 
-            this.btnConvertImage.Location = new System.Drawing.Point(78, 225);
+            this.btnConvertImage.Location = new System.Drawing.Point(82, 225);
             this.btnConvertImage.Name = "btnConvertImage";
             this.btnConvertImage.Size = new System.Drawing.Size(179, 23);
             this.btnConvertImage.TabIndex = 3;
@@ -151,7 +151,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(349, 266);
+            this.ClientSize = new System.Drawing.Size(358, 261);
             this.Controls.Add(this.btnConvertImage);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox1);
