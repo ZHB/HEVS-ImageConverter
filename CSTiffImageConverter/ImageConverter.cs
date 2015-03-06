@@ -21,6 +21,7 @@ using System.Linq;
 using System.Drawing.Imaging;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Drawing.Drawing2D;
 
 
 namespace CSTiffImageConverter
@@ -42,37 +43,52 @@ namespace CSTiffImageConverter
         /// <param name="image">
         /// Image to resize
         /// </param>
-        /// <param name="width">
-        /// Desired output width
-        /// </param>
-        /// <param name="height">
-        /// Desired output height
+        /// <param name="destinationSize">
+        /// Desired output width and height
         /// </param>
         /// <returns>
         /// Resized image
         /// </returns>
-        public Bitmap ResizeImage(Image image, int width, int height)
+        public Image ResizeImage(Image image, Size destinationSize)
         {
-            //a holder for the result
-            Bitmap bitmap = new Bitmap(width, height);
-
-            //set the resolutions the same to avoid cropping due to resolution differences
-            bitmap.SetResolution(image.HorizontalResolution, image.VerticalResolution);
-
-
-            //use a graphics object to draw the resized image into the bitmap
-            using (Graphics graphics = Graphics.FromImage(bitmap))
+            if(destinationSize.Width <= 0 || destinationSize.Height <= 0)
             {
-                //set the resize quality modes to high quality
-                graphics.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
-                graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-                graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-
-                //draw the image into the target bitmap
-                graphics.DrawImage(image, 0, 0, bitmap.Width, bitmap.Height);
+                throw new Exception("Image height and width must be greather than zero !");
             }
 
-            //return the resulting bitmap
+            int originalWidth = image.Width;
+            int originalHeight = image.Height;
+
+            //how many units are there to make the original length
+            double hRatio = (double)originalHeight / destinationSize.Height;
+            double wRatio = (double)originalWidth / destinationSize.Width;
+
+            //get the shorter side
+            double ratio = Math.Min(hRatio, wRatio);
+
+            int hScale = Convert.ToInt32(destinationSize.Height * ratio);
+            int wScale = Convert.ToInt32(destinationSize.Width * ratio);
+
+            //start cropping from the center
+            int startX = (originalWidth - wScale) / 2;
+            int startY = (originalHeight - hScale) / 2;
+
+            //crop the image from the specified location and size
+            Rectangle sourceRectangle = new Rectangle(startX, startY, wScale, hScale);
+
+            //the future size of the image
+            Image bitmap = new Bitmap(destinationSize.Width, destinationSize.Height);
+
+            //fill-in the whole bitmap
+            Rectangle destinationRectangle = new Rectangle(0, 0, bitmap.Width, bitmap.Height);
+
+            //generate the new image
+            using (Graphics g = Graphics.FromImage(bitmap))
+            {
+                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                g.DrawImage(image, destinationRectangle, sourceRectangle, GraphicsUnit.Pixel);
+            }
+
             return bitmap;
         }
 
@@ -126,11 +142,16 @@ namespace CSTiffImageConverter
 
         private void Save(Image image, string imagePaths)
         {
+
             if (isMultipage && outputFormat.Equals(System.Drawing.Imaging.ImageFormat.Tiff))
             {
                 //Here put the safe for multipage tiff
             }
-            else {
+            else 
+            {
+                // resize testing
+                image = ResizeImage(image, new Size(750, 900));
+
                 image.Save(imagePaths, outputFormat);
             }
         }
