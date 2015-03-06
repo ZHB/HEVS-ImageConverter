@@ -90,9 +90,9 @@ namespace CSTiffImageConverter
             {
                 try
                 {
-                    ImageConverter ic = new ImageConverter(selectedFormat.ImageFormat);
+                    ImageConverter ic = new ImageConverter(selectedFormat.ImageFormat, chkIsMultipage.Checked);
 
-                    ic.ConvertImage(selectedFiles, chkIsMultipage.Checked);
+                    ic.ConvertImage(selectedFiles);
                     MessageBox.Show("Image conversion completed.");
                 }
                 catch (Exception ex)

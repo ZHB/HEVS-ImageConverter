@@ -27,10 +27,12 @@ namespace CSTiffImageConverter
 {
     public class ImageConverter
     {
+        private Boolean isMultipage;
         private ImageFormat outputFormat;
 
-        public ImageConverter(ImageFormat outputFormat)
+        public ImageConverter(ImageFormat outputFormat, Boolean isMultipage)
         {
+            this.isMultipage = isMultipage;
             this.outputFormat = outputFormat;
         }
 
@@ -86,7 +88,7 @@ namespace CSTiffImageConverter
         /// <returns>
         /// String array having full name to images.
         /// </returns>
-        private string[] saveImage(Image image, string[] fileNames)
+        private string[] ConvertBmp(Image image, string[] fileNames)
         {
             FrameDimension frameDimensions = new FrameDimension(image.FrameDimensionsList[0]);
 
@@ -104,12 +106,25 @@ namespace CSTiffImageConverter
                         Path.GetDirectoryName(fileNames[0]),
                         Path.GetFileNameWithoutExtension(fileNames[0]),
                         frame);
-                    bmp.Save(imagePaths[frame], outputFormat);
+
+                    Save(bmp, imagePaths[frame]);
                 }
             }
 
             return imagePaths;
         }
+
+        private void Save(Image image, string imagePaths)
+        {
+            if (isMultipage && outputFormat.Equals(System.Drawing.Imaging.ImageFormat.Tiff))
+            {
+                //Here put the safe for multipage tiff
+            }
+            else {
+                image.Save(imagePaths, outputFormat);
+            }
+        }
+
 
         /// <summary>
         /// Converts image(s) in desired format
@@ -126,7 +141,7 @@ namespace CSTiffImageConverter
         /// <returns>
         /// String array having full name to images.
         /// </returns>
-        public string[] ConvertImage(string[] fileNames, bool isMultipage)
+        public string[] ConvertImage(string[] fileNames)
         {
             using (Image imageFile = Image.FromFile(fileNames[0]))
             {
@@ -192,7 +207,7 @@ namespace CSTiffImageConverter
                 }
                 else
                 {
-                    return saveImage(imageFile, fileNames);
+                    return ConvertBmp(imageFile, fileNames);
 
                     /*
                     FrameDimension frameDimensions = new FrameDimension(imageFile.FrameDimensionsList[0]);

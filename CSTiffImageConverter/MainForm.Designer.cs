@@ -67,7 +67,7 @@
             // 
             // btnImagePicker
             // 
-            this.btnImagePicker.Location = new System.Drawing.Point(70, 48);
+            this.btnImagePicker.Location = new System.Drawing.Point(70, 45);
             this.btnImagePicker.Name = "btnImagePicker";
             this.btnImagePicker.Size = new System.Drawing.Size(179, 23);
             this.btnImagePicker.TabIndex = 2;
