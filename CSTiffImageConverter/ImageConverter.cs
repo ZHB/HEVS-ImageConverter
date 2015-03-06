@@ -27,6 +27,77 @@ namespace CSTiffImageConverter
 {
     public class ImageConverter
     {
+        private ImageFormat outputFormat;
+
+        public ImageConverter(ImageFormat outputFormat)
+        {
+            this.outputFormat = outputFormat;
+        }
+
+        /// <summary>
+        /// Resize an image to given width and height
+        /// </summary>
+        /// <param name="fileNames">
+        /// String array having full name to image(s).
+        /// </param>
+        /// <param name="outputFormat">
+        /// Desired image(s) ouput format
+        /// </param>
+        /// <param name="isMultipage">
+        /// true to create single multipage tiff file otherwise, false.
+        /// </param>
+        /// <returns>
+        /// String array having full name to images.
+        /// </returns>
+        public Bitmap ResizeImage(Image image, int width, int height)
+        {
+            //a holder for the result
+            Bitmap bitmap = new Bitmap(width, height);
+
+            //set the resolutions the same to avoid cropping due to resolution differences
+            bitmap.SetResolution(image.HorizontalResolution, image.VerticalResolution);
+
+
+            //use a graphics object to draw the resized image into the bitmap
+            using (Graphics graphics = Graphics.FromImage(bitmap))
+            {
+                //set the resize quality modes to high quality
+                graphics.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+                graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+
+                //draw the image into the target bitmap
+                graphics.DrawImage(image, 0, 0, bitmap.Width, bitmap.Height);
+            }
+
+            //return the resulting bitmap
+            return bitmap;
+        }
+
+        private string[] saveImage(Image image, string[] fileNames)
+        {
+            FrameDimension frameDimensions = new FrameDimension(image.FrameDimensionsList[0]);
+
+            // Gets the number of pages from the tiff image (if multipage)
+            int frameNum = image.GetFrameCount(frameDimensions);
+            string[] imagePaths = new string[frameNum];
+
+            for (int frame = 0; frame < frameNum; frame++)
+            {
+                // Selects one frame at a time and save as jpeg.
+                image.SelectActiveFrame(frameDimensions, frame);
+                using (Bitmap bmp = new Bitmap(image))
+                {
+                    imagePaths[frame] = String.Format("{0}\\{1}{2}." + outputFormat.ToString().ToLowerInvariant(),
+                        Path.GetDirectoryName(fileNames[0]),
+                        Path.GetFileNameWithoutExtension(fileNames[0]),
+                        frame);
+                    bmp.Save(imagePaths[frame], outputFormat);
+                }
+            }
+
+            return imagePaths;
+        }
 
         /// <summary>
         /// Converts image(s) in desired format
@@ -43,9 +114,8 @@ namespace CSTiffImageConverter
         /// <returns>
         /// String array having full name to images.
         /// </returns>
-        public static string[] ConvertImage(string[] fileNames, ImageFormat outputFormat, bool isMultipage)
+        public string[] ConvertImage(string[] fileNames, bool isMultipage)
         {
-            
             using (Image imageFile = Image.FromFile(fileNames[0]))
             {
              
@@ -107,11 +177,13 @@ namespace CSTiffImageConverter
                      
 
                     return null;
-                } 
+                }
                 else
                 {
-                    FrameDimension frameDimensions = new FrameDimension(
-                    imageFile.FrameDimensionsList[0]);
+                    return saveImage(imageFile, fileNames);
+
+                    /*
+                    FrameDimension frameDimensions = new FrameDimension(imageFile.FrameDimensionsList[0]);
 
                     // Gets the number of pages from the tiff image (if multipage)
                     int frameNum = imageFile.GetFrameCount(frameDimensions);
@@ -134,6 +206,7 @@ namespace CSTiffImageConverter
                     
 
                     return imagePaths;
+                     */
                 }
             }
         }

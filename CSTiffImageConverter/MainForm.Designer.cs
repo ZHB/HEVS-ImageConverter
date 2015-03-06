@@ -34,9 +34,9 @@
             this.chkIsMultipage = new System.Windows.Forms.CheckBox();
             this.dlgOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.lblOutputOptions = new System.Windows.Forms.Label();
             this.cbOutputFormat = new System.Windows.Forms.ComboBox();
             this.btnConvertImage = new System.Windows.Forms.Button();
-            this.lblOutputOptions = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.SuspendLayout();
@@ -104,6 +104,15 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Output options";
             // 
+            // lblOutputOptions
+            // 
+            this.lblOutputOptions.AutoSize = true;
+            this.lblOutputOptions.Location = new System.Drawing.Point(6, 16);
+            this.lblOutputOptions.Name = "lblOutputOptions";
+            this.lblOutputOptions.Size = new System.Drawing.Size(175, 13);
+            this.lblOutputOptions.TabIndex = 3;
+            this.lblOutputOptions.Text = "Selecte disired image output format ";
+            // 
             // cbOutputFormat
             // 
             this.cbOutputFormat.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -123,15 +132,6 @@
             this.btnConvertImage.Text = "Convert";
             this.btnConvertImage.UseVisualStyleBackColor = true;
             this.btnConvertImage.Click += new System.EventHandler(this.btnConvertImage_Click);
-            // 
-            // lblOutputOptions
-            // 
-            this.lblOutputOptions.AutoSize = true;
-            this.lblOutputOptions.Location = new System.Drawing.Point(6, 16);
-            this.lblOutputOptions.Name = "lblOutputOptions";
-            this.lblOutputOptions.Size = new System.Drawing.Size(175, 13);
-            this.lblOutputOptions.TabIndex = 3;
-            this.lblOutputOptions.Text = "Selecte disired image output format ";
             // 
             // MainForm
             // 
