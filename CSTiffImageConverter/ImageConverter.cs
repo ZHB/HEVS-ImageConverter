@@ -37,17 +37,17 @@ namespace CSTiffImageConverter
         /// <summary>
         /// Resize an image to given width and height
         /// </summary>
-        /// <param name="fileNames">
-        /// String array having full name to image(s).
+        /// <param name="image">
+        /// Image to resize
         /// </param>
-        /// <param name="outputFormat">
-        /// Desired image(s) ouput format
+        /// <param name="width">
+        /// Desired output width
         /// </param>
-        /// <param name="isMultipage">
-        /// true to create single multipage tiff file otherwise, false.
+        /// <param name="height">
+        /// Desired output height
         /// </param>
         /// <returns>
-        /// String array having full name to images.
+        /// Resized image
         /// </returns>
         public Bitmap ResizeImage(Image image, int width, int height)
         {
@@ -74,6 +74,18 @@ namespace CSTiffImageConverter
             return bitmap;
         }
 
+        /// <summary>
+        /// Save given image
+        /// </summary>
+        /// <param name="image">
+        /// Image to save
+        /// </param>
+        /// <param name="fileNames">
+        /// String array having full name to image(s).
+        /// </param>
+        /// <returns>
+        /// String array having full name to images.
+        /// </returns>
         private string[] saveImage(Image image, string[] fileNames)
         {
             FrameDimension frameDimensions = new FrameDimension(image.FrameDimensionsList[0]);
