@@ -10,12 +10,15 @@ namespace UnitTestImageTool
     [TestClass]
     public class TestImageTool
     {
+        //Picture path for UnitTests
+        String startupPath = System.IO.Directory.GetCurrentDirectory() + "\\..\\..\\pictures\\";
+
         [TestMethod]
         public void TestResizeOneImage()
         {
             // Test image source
             String[] paths = new String[1];
-            paths[0] = "D:\\Utilisateurs\\Vince\\Documents\\Visual Studio 2013\\Projects\\ImageConverter\\UnitTestCSTiffImageConverter\\pictures\\testimg.jpg";
+            paths[0] = startupPath + "testimg.jpg";
 
             // output size
             ImageFormat outputFormat = ImageFormat.Bmp;
@@ -38,8 +41,8 @@ namespace UnitTestImageTool
 
             // array containing 
             String[] paths = new String[2];
-            paths[0] = "D:\\Utilisateurs\\Vince\\Documents\\Visual Studio 2013\\Projects\\ImageConverter\\UnitTestCSTiffImageConverter\\pictures\\testimg.jpg";
-            paths[1] = "D:\\Utilisateurs\\Vince\\Documents\\Visual Studio 2013\\Projects\\ImageConverter\\UnitTestCSTiffImageConverter\\pictures\\testimg.jpg";
+            paths[0] = startupPath + "testimg.jpg";
+            paths[1] = startupPath + "testimg.jpg";
 
             // output format
             ImageFormat outputFormat = ImageFormat.Tiff;
@@ -69,7 +72,7 @@ namespace UnitTestImageTool
         {
             // array containing 
             String[] paths = new String[1];
-            paths[0] = "D:\\Utilisateurs\\Vince\\Documents\\Visual Studio 2013\\Projects\\ImageConverter\\UnitTestCSTiffImageConverter\\pictures\\testimg.jpg";
+            paths[0] = startupPath + "testimg.jpg";
 
             // output format
             BmpImageConverter.cropImage = true;
@@ -92,7 +95,7 @@ namespace UnitTestImageTool
         {
             // array containing 
             String[] paths = new String[1];
-            paths[0] = "D:\\Utilisateurs\\Vince\\Documents\\Visual Studio 2013\\Projects\\ImageConverter\\UnitTestCSTiffImageConverter\\pictures\\testimg.jpg";
+            paths[0] = startupPath + "testimg.jpg";
 
 
             ImageFormat outputFormat = ImageFormat.Jpeg;
