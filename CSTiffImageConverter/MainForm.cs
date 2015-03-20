@@ -34,7 +34,7 @@ using System.Text;
 using System.Windows.Forms;
 
 
-namespace CSTiffImageConverter
+namespace ImageTool
 {
     public partial class MainForm : Form
     {
@@ -81,7 +81,6 @@ namespace CSTiffImageConverter
             selectedFormat = (OutputFormat)cmb.SelectedItem;
 
             chkIsMultipage.Enabled = (selectedFormat.Value.Equals("tiff")) ? true : false;
-            
         }
 
         private void btnConvertImage_Click(object sender, EventArgs e)
@@ -90,9 +89,17 @@ namespace CSTiffImageConverter
             {
                 try
                 {
-                    ImageConverter ic = new ImageConverter(selectedFormat.ImageFormat, chkIsMultipage.Checked);
+                    // resize to specified size if checkbox ischecked
+                    if(chkResize.Checked)
+                    {
+                        // crop image or not ?
+                        BmpImageConverter.cropImage = true;
 
-                    ic.ConvertImage(selectedFiles);
+                    }
+                    
+                    // convert image and resize if needed
+                    BmpImageConverter.ConvertImage(selectedFiles, selectedFormat.ImageFormat, chkIsMultipage.Checked, 1024, 768);
+
                     MessageBox.Show("Image conversion completed.");
                 }
                 catch (Exception ex)

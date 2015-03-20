@@ -24,17 +24,30 @@ using System.Windows.Forms;
 using System.Drawing.Drawing2D;
 
 
-namespace CSTiffImageConverter
+namespace ImageTool
 {
-    public class ImageConverter
+    public static class BmpImageConverter
     {
-        private Boolean isMultipage;
-        private ImageFormat outputFormat;
+        public static Boolean cropImage { get; set; }
 
-        public ImageConverter(ImageFormat outputFormat, Boolean isMultipage)
+        /// <summary>
+        /// Resize an image
+        /// </summary>
+        /// <param name="image">
+        /// Image to resize
+        /// </param>
+        /// <param name="cropImage">
+        /// Crop image or not 
+        /// </param>
+        /// <returns>
+        /// Resized image
+        /// </returns>
+        public static Image ResizeImage(Image image, Boolean cropImage = false, int width = 0, int height = 0)
         {
-            this.isMultipage = isMultipage;
-            this.outputFormat = outputFormat;
+            width = (width <= 0) ? image.Size.Width : width;
+            height = (height <= 0) ? image.Size.Height : height;
+
+            return ResizeImage(image, new Size(width, height), cropImage);
         }
 
         /// <summary>
@@ -46,16 +59,14 @@ namespace CSTiffImageConverter
         /// <param name="destinationSize">
         /// Desired output width and height
         /// </param>
+        /// <param name="cropImage">
+        /// Crop image or not
+        /// </param>
         /// <returns>
         /// Resized image
         /// </returns>
-        public Image ResizeImage(Image image, Size destinationSize)
+        public static Image ResizeImage(Image image, Size destinationSize, Boolean cropImage = false)
         {
-            if(destinationSize.Width <= 0 || destinationSize.Height <= 0)
-            {
-                throw new Exception("Image height and width must be greather than zero !");
-            }
-
             int originalWidth = image.Width;
             int originalHeight = image.Height;
 
@@ -64,7 +75,8 @@ namespace CSTiffImageConverter
             double wRatio = (double)originalWidth / destinationSize.Width;
 
             //get the shorter side
-            double ratio = Math.Min(hRatio, wRatio);
+            //double ratio = Math.Min(hRatio, wRatio);
+            double ratio = cropImage ? Math.Min(hRatio, wRatio) : Math.Max(hRatio, wRatio);
 
             int hScale = Convert.ToInt32(destinationSize.Height * ratio);
             int wScale = Convert.ToInt32(destinationSize.Width * ratio);
@@ -93,71 +105,6 @@ namespace CSTiffImageConverter
         }
 
         /// <summary>
-        /// Save given image
-        /// </summary>
-        /// <param name="image">
-        /// Image to save
-        /// </param>
-        /// <param name="fileNames">
-        /// String array having full name to image(s).
-        /// </param>
-        /// <returns>
-        /// String array having full name to images.
-        /// </returns>
-        private string[] ConvertBmp(Image image, string[] fileNames)
-        {
-            
-            FrameDimension frameDimensions = new FrameDimension(image.FrameDimensionsList[0]);
-
-            // Gets the number of pages from the tiff image (if multipage)
-            int frameNum = image.GetFrameCount(frameDimensions);
-            string[] imagePaths = new string[frameNum];
-
-            try
-            {
-                for (int frame = 0; frame < frameNum; frame++)
-                {
-                    // Selects one frame at a time and save as jpeg.
-                    image.SelectActiveFrame(frameDimensions, frame);
-                    using (Bitmap bmp = new Bitmap(image))
-                    {
-                        imagePaths[frame] = String.Format("{0}\\{1}{2}." + outputFormat.ToString().ToLowerInvariant(),
-                            Path.GetDirectoryName(fileNames[0]),
-                            Path.GetFileNameWithoutExtension(fileNames[0]),
-                            frame);
-                        Save(bmp, imagePaths[frame]);
-                    }
-                }
-
-                return imagePaths;
-            }
-            catch
-            {
-                MessageBox.Show("There was a problem saving the file. Check the file permissions.");
-            }
-
-
-            return null;
-        }
-
-        private void Save(Image image, string imagePaths)
-        {
-
-            if (isMultipage && outputFormat.Equals(System.Drawing.Imaging.ImageFormat.Tiff))
-            {
-                //Here put the safe for multipage tiff
-            }
-            else 
-            {
-                // resize testing
-                image = ResizeImage(image, new Size(750, 900));
-
-                image.Save(imagePaths, outputFormat);
-            }
-        }
-
-
-        /// <summary>
         /// Converts image(s) in desired format
         /// </summary>
         /// <param name="fileNames">
@@ -172,7 +119,7 @@ namespace CSTiffImageConverter
         /// <returns>
         /// String array having full name to images.
         /// </returns>
-        public string[] ConvertImage(string[] fileNames)
+        public static string[] ConvertImage(string[] fileNames, ImageFormat outputFormat, Boolean isMultipage, int outputWidth = 0, int outputHeight = 0)
         {
             using (Image imageFile = Image.FromFile(fileNames[0]))
             {
@@ -194,14 +141,17 @@ namespace CSTiffImageConverter
                         {
                             if (i == 0)
                             {
-                                tiffPaths[i] = String.Format("{0}\\{1}.tif",
+                                tiffPaths[i] = String.Format("{0}\\{1}.tiff",
                                     Path.GetDirectoryName(fileNames[i]),
                                     Path.GetFileNameWithoutExtension(fileNames[i]));
 
                                 // Initialize the first frame of multipage tiff.
                                 tiffImg = Image.FromFile(fileNames[i]);
-                                encoderParams.Param[0] = new EncoderParameter(
-                                    Encoder.SaveFlag, (long)EncoderValue.MultiFrame);
+                                encoderParams.Param[0] = new EncoderParameter(Encoder.SaveFlag, (long)EncoderValue.MultiFrame);
+
+                                // resize image
+                                tiffImg = BmpImageConverter.ResizeImage(tiffImg, cropImage, outputWidth, outputHeight);
+
                                 tiffImg.Save(tiffPaths[i], tiffCodecInfo, encoderParams);
                             }
                             else
@@ -211,15 +161,17 @@ namespace CSTiffImageConverter
                                     Encoder.SaveFlag, (long)EncoderValue.FrameDimensionPage);
                                 using (Image frame = Image.FromFile(fileNames[i]))
                                 {
-                                    tiffImg.SaveAdd(frame, encoderParams);
+                                    // resize image
+                                    Image frame2 = BmpImageConverter.ResizeImage(frame, cropImage, outputWidth, outputHeight);
+
+                                    tiffImg.SaveAdd(frame2, encoderParams);
                                 }
                             }
 
                             if (i == fileNames.Length - 1)
                             {
                                 // When it is the last frame, flush the resources and closing.
-                                encoderParams.Param[0] = new EncoderParameter(
-                                    Encoder.SaveFlag, (long)EncoderValue.Flush);
+                                encoderParams.Param[0] = new EncoderParameter(Encoder.SaveFlag, (long)EncoderValue.Flush);
                                 tiffImg.SaveAdd(encoderParams);
                             }
                         }
@@ -232,15 +184,12 @@ namespace CSTiffImageConverter
                             tiffImg = null;
                         }
                     }
-                     
 
-                    return null;
+                    return tiffPaths;
                 }
                 else
                 {
-                    return ConvertBmp(imageFile, fileNames);
-
-                    /*
+                    
                     FrameDimension frameDimensions = new FrameDimension(imageFile.FrameDimensionsList[0]);
 
                     // Gets the number of pages from the tiff image (if multipage)
@@ -258,13 +207,18 @@ namespace CSTiffImageConverter
                                 Path.GetDirectoryName(fileNames[0]),
                                 Path.GetFileNameWithoutExtension(fileNames[0]),
                                 frame);
-                            bmp.Save(imagePaths[frame], outputFormat);
+
+                            
+                            // resize image
+                            Image img = BmpImageConverter.ResizeImage(bmp, cropImage, outputWidth, outputHeight);
+
+                            // save image
+                            img.Save(imagePaths[frame], outputFormat);
                         }
                     }
                     
 
-                    return imagePaths;
-                     */
+                    return imagePaths;   
                 }
             }
         }

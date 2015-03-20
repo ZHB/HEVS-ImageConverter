@@ -1,4 +1,4 @@
-﻿namespace CSTiffImageConverter
+﻿namespace ImageTool
 {
     partial class MainForm
     {
